@@ -17,10 +17,10 @@ d.	A  pipe ‘|’ separated list of participant IID’s which were found to hav
 In addition to what is required for the pipeline described above you will also find additional scripts used to confirm that the variants reported are in fact pathogenic or likely pathogenic and that the number of people with thyroid cancer and a mutation are correct. These were analyzed manually and cannot be successfully run outside AoU. 
 
 Additional scripts:
-•	`aou_methods/R_scripts/APC_pathogenic_variants_AoU_v7.R`
-•	`aou_methods/R_scripts/PTEN_pathogenic_variants_AoU_v7.R`
-•	`aou_methods/R_scripts/RET_pathogenic_variants_AoU_v7.R`
-•	‘`aou_methods/manually_check_pathogeniciy.py`
+* `aou_methods/R_scripts/APC_pathogenic_variants_AoU_v7.R`
+* `aou_methods/R_scripts/PTEN_pathogenic_variants_AoU_v7.R`
+* `aou_methods/R_scripts/RET_pathogenic_variants_AoU_v7.R`
+* ‘`aou_methods/manually_check_pathogeniciy.py`
 
 ## Environment set-up 
 ```bash
