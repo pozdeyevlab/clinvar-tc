@@ -322,7 +322,6 @@ main <- function(inputs, gt_dt, phenotype, clinvar_df) {
 
     filtered_gt_dt <- gt_dt[gt_dt$variant %in% as.list(varlist),]
     print('Successfully filtered df fo variants in varlist')
-    write.table(filtered_gt_dt, file='helper.tsv', sep='\t', quote=FALSE, row.name=FALSE)
 
     # If there are 0 rows in the filtered table, then associated variants are not present in AoU dataset v7
     rows <- nrow(filtered_gt_dt)
