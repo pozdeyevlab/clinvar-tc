@@ -1,0 +1,6 @@
+vcf_dir: "example_vcf"
+variant_table_path: "example_inputs/regions_21.tsv"
+output_dir: "example_inputs/dev_output"
+clinvar: "example_inputs/fake_clinvar_21.tsv"
+omim: "example_inputs/genemap2.txt"
+covariates: "example_inputs/example_fake_covariates.tsv"

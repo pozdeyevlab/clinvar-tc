@@ -1,0 +1,4 @@
+Building DAG of jobs...
+WildcardError in rule all in file /Users/whitesa3/Projects/GBMI-GWAS/clinvar-tc/aou_methods/Snakefile, line 81:
+Wildcards in input files cannot be determined from output files: (rule all, line 83, /Users/whitesa3/Projects/GBMI-GWAS/clinvar-tc/aou_methods/Snakefile)
+'output_dir'

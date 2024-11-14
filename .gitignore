@@ -1,0 +1,8 @@
+.DS_Store
+aou_methods/modules
+aou_methods/example_inputs/genemap2.txt
+aou_methods/dev_output/
+aou_methods/example_vcf/
+aou_methods/fake_covariates.py
+aou_methods/genemap2.txt
+!aou_methods/modules/manual_check.py

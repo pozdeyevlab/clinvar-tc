@@ -1,0 +1,7 @@
+Building DAG of jobs...
+MissingInputException in rule concat_gt_tables in file /Users/whitesa3/Projects/GBMI-GWAS/clinvar-tc/aou_methods/Snakefile, line 102:
+Missing input files for rule concat_gt_tables:
+    output: results/concat_gt_table/genotype_table.tsv.gz
+    affected files:
+        per_chrom_gt_table/chr20.tsv.gz
+        per_chrom_gt_table/chr21.tsv.gz

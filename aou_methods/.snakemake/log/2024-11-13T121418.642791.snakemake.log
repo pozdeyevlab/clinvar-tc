@@ -1,0 +1,91 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                          count
+-------------------------  -------
+all                              1
+bcftools_filter_and_query        2
+calculate_inheritance            1
+concat_gt_tables                 1
+total                            5
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 12:14:18 2024]
+localrule bcftools_filter_and_query:
+    input: example_inputs/chr21.vcf.gz, regions.tsv
+    output: dev_output2/per_chrom_gt_table/chr21.tsv.gz
+    log: dev_output2/per_chrom_gt_table/chr21.log
+    jobid: 2
+    reason: Missing output files: dev_output2/per_chrom_gt_table/chr21.tsv.gz
+    wildcards: output_dir=dev_output2, sample=chr21
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 12:14:18 2024]
+Finished job 2.
+1 of 5 steps (20%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 12:14:18 2024]
+localrule bcftools_filter_and_query:
+    input: example_inputs/chr20.vcf.gz, regions.tsv
+    output: dev_output2/per_chrom_gt_table/chr20.tsv.gz
+    log: dev_output2/per_chrom_gt_table/chr20.log
+    jobid: 1
+    reason: Missing output files: dev_output2/per_chrom_gt_table/chr20.tsv.gz
+    wildcards: output_dir=dev_output2, sample=chr20
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 12:14:18 2024]
+Finished job 1.
+2 of 5 steps (40%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 12:14:18 2024]
+localrule concat_gt_tables:
+    input: dev_output2/per_chrom_gt_table/chr20.tsv.gz, dev_output2/per_chrom_gt_table/chr21.tsv.gz, example_inputs/chr21.vcf.gz
+    output: dev_output2/concat_gt_table/genotype_table.tsv.gz
+    log: dev_output2/concat_gt_table/genotype_table.log
+    jobid: 3
+    reason: Missing output files: dev_output2/concat_gt_table/genotype_table.tsv.gz; Input files updated by another job: dev_output2/per_chrom_gt_table/chr20.tsv.gz, dev_output2/per_chrom_gt_table/chr21.tsv.gz
+    wildcards: output_dir=dev_output2
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 12:14:20 2024]
+Finished job 3.
+3 of 5 steps (60%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 12:14:20 2024]
+localrule calculate_inheritance:
+    input: genemap2.txt, clinvar.tsv
+    output: dev_output2/regression_inputs/inheritance.tsv
+    log: dev_output2/regression_inputs/inheritance.log
+    jobid: 4
+    reason: Missing output files: dev_output2/regression_inputs/inheritance.tsv
+    wildcards: output_dir=dev_output2
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 12:14:34 2024]
+Finished job 4.
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 12:14:34 2024]
+localrule all:
+    input: dev_output2/per_chrom_gt_table/chr20.tsv.gz, dev_output2/per_chrom_gt_table/chr21.tsv.gz, dev_output2/concat_gt_table/genotype_table.tsv.gz, dev_output2/regression_inputs/inheritance.tsv
+    jobid: 0
+    reason: Input files updated by another job: dev_output2/per_chrom_gt_table/chr20.tsv.gz, dev_output2/per_chrom_gt_table/chr21.tsv.gz, dev_output2/concat_gt_table/genotype_table.tsv.gz, dev_output2/regression_inputs/inheritance.tsv
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 12:14:34 2024]
+Finished job 0.
+5 of 5 steps (100%) done
+Complete log: .snakemake/log/2024-11-13T121418.642791.snakemake.log

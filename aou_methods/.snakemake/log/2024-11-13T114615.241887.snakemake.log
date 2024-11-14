@@ -1,0 +1,58 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                      count
+---------------------  -------
+all                          1
+calculate_inheritance        1
+concat_gt_tables             1
+total                        3
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 11:46:17 2024]
+localrule concat_gt_tables:
+    input: dev_output/per_chrom_gt_table/chr20.tsv.gz, dev_output/per_chrom_gt_table/chr21.tsv.gz, example_inputs/chr21.vcf.gz
+    output: dev_output/concat_gt_table/genotype_table.tsv.gz
+    log: dev_output/concat_gt_table/genotype_table.log
+    jobid: 3
+    reason: Set of input files has changed since last execution; Params have changed since last execution
+    wildcards: output_dir=dev_output
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 11:46:17 2024]
+Finished job 3.
+1 of 3 steps (33%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 11:46:17 2024]
+localrule calculate_inheritance:
+    input: genemap2.txt, clinvar.tsv
+    output: dev_output/regression_inputs/inheritance.tsv
+    log: dev_output/regression_inputs/inheritance.log
+    jobid: 4
+    reason: Missing output files: dev_output/regression_inputs/inheritance.tsv
+    wildcards: output_dir=dev_output
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 11:46:31 2024]
+Finished job 4.
+2 of 3 steps (67%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Nov 13 11:46:31 2024]
+localrule all:
+    input: dev_output/per_chrom_gt_table/chr20.tsv.gz, dev_output/per_chrom_gt_table/chr21.tsv.gz, dev_output/concat_gt_table/genotype_table.tsv.gz, dev_output/regression_inputs/inheritance.tsv
+    jobid: 0
+    reason: Input files updated by another job: dev_output/regression_inputs/inheritance.tsv, dev_output/concat_gt_table/genotype_table.tsv.gz
+    resources: tmpdir=/var/folders/6n/qsyvjjbx6394xfkzt4c8krsm0000gp/T
+
+[Wed Nov 13 11:46:31 2024]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: .snakemake/log/2024-11-13T114615.241887.snakemake.log

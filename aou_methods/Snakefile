@@ -1,0 +1,151 @@
+#!/usr/bin/env Python3
+from itertools import dropwhile
+from pathlib import Path
+from typing import Dict, Iterable, List, NamedTuple, Optional, Set, Tuple
+
+################################################################################
+# Code to parse the sample sheet and find input files
+################################################################################
+
+# Grab the location of various things from the config
+variant_table_path: Path = Path(config["variant_table_path"])
+vcf_dir: Path            = Path(config["vcf_dir"])
+output_dir: Path         = Path(config["output_dir"])
+omim: Path               = Path(config["omim"])
+clinvar: Path            = Path(config["clinvar"])
+covariates: Path         = Path(config["covariates"])
+
+class Sample(NamedTuple):
+    """Represents a sample"""
+    name: str
+    vcf: Path
+
+def find_vcfs(vcf_dir: Path, id: str) -> List[Path]:
+    """Function to find the VCF file path for a single sample."""
+    vcfs = list(vcf_dir.glob(f"*{id}*vcf*z"))
+    return (vcfs[0])
+
+samples: Dict[str, Sample] = dict()
+basenames: Set[str] = set([file.stem.split('.vcf')[0] for file in vcf_dir.iterdir()])
+
+gt_tables = []
+
+for name in basenames:
+    vcf = find_vcfs(vcf_dir, name)
+    header_vcf = vcf
+    gt_table = f"{output_dir}/per_chrom_gt_table/{name}.tsv.gz"
+    gt_tables.append(gt_table)
+    samples[name] = Sample(name = name, vcf = vcf)
+
+################################################################################
+# Directives
+################################################################################
+onerror:
+    """Code that gets called  if / when the snakemake pipeline exits with an error.
+    The `log` variable contains a path to the snakemake log file which can be parsed
+    for more information. Summarizes information on failed jobs and writes it to the
+    output.
+    """
+    try:
+        path = Path(log)
+        RULE_PREFIX = "Error in rule "
+        LOG_PREFIX = "    log: "
+        CMD_PREFIX = "Command "
+
+        with path.open("r") as fh:
+            lines: Iterable[str] = fh.readlines()
+
+        while lines:
+            lines = list(dropwhile(lambda l: not l.startswith(RULE_PREFIX), lines))
+            if lines:
+                rule_name = lines[0].rstrip()[len(RULE_PREFIX) : -1]
+                lines = dropwhile(lambda l: not l.startswith(LOG_PREFIX), lines)
+                log_path = Path(next(lines).rstrip()[len(LOG_PREFIX) :].split()[0])
+
+                print(f"========== Start of Error Info for {rule_name} ==========")
+                print(f"Failed rule: {rule_name}")
+                print(f"Contents of log file: {log_path}")
+                with log_path.open("r") as fh:
+                    for line in fh.readlines():
+                        print(f"    {line.rstrip()}")
+                print(f"=========== End of Error Info for {rule_name} ===========")
+    except Exception as ex:
+        print("################################################")
+        print("Exception raised in snakemake onerror handler.")
+        print(str(ex))
+        print("################################################")
+
+
+################################################################################
+# Beginning of rule declarations
+################################################################################
+rule all:
+    """
+    Default rule that is executed when snakemake runs.  The 'inputs' here list the set of files
+    that the pipeline will generate by default if a specific list isn't provided.
+    """
+    input:
+        [f"{output_dir}/per_chrom_gt_table/{sample}.tsv.gz" for sample in samples],
+        f"{output_dir}/concat_gt_table/genotype_table.tsv.gz",
+        f"{output_dir}/regression_inputs/inheritance.tsv",
+        f"{output_dir}/logistic_regression_and_overlap/logistic_regresison.tsv",
+        f"{output_dir}/logistic_regression_and_overlap/variant_summary.tsv"
+
+rule bcftools_filter_and_query:
+    input: 
+        vcf = lambda wc: samples[wc.sample].vcf,
+        variant_file = "regions.tsv"
+    output:
+        vcf = "{output_dir}/per_chrom_gt_table/{sample}.tsv.gz"
+    log:
+        "{output_dir}/per_chrom_gt_table/{sample}.log"
+    shell:
+        "bcftools norm -m- -R {input.variant_file} {input.vcf} | bcftools query -f 'chr%CHROM:%POS:%REF:%ALT[\t%GT]\n' | bgzip -c >> {output.vcf}"
+
+
+rule concat_gt_tables:
+    input: 
+        gt_tables = gt_tables,
+        header_vcf = header_vcf
+    params:
+        gt_tables = ','.join(gt_tables)
+    output:
+        "{output_dir}/concat_gt_table/genotype_table.tsv.gz"
+    log:
+        "{output_dir}/concat_gt_table/genotype_table.log"
+    shell:
+        "bash bash_scripts/concat.sh -f {params.gt_tables} -v {input.header_vcf} -o {output} &> {log}"
+
+
+rule calculate_inheritance:
+    input:
+        omim = omim,
+        clinvar = clinvar
+    output:
+        "{output_dir}/regression_inputs/inheritance.tsv"
+    log:
+        "{output_dir}/regression_inputs/inheritance.log"
+    shell:
+        "Rscript R_scripts/calculate_inheritance.R --omim {input.omim} --clinvar {input.clinvar} --out {output} &> {log}"
+
+rule regression_and_overlap:
+    input:
+        inheritance = "{output_dir}/regression_inputs/inheritance.tsv",
+        covariates = covariates,
+        clinvar = clinvar,
+        genotype = "{output_dir}/concat_gt_table/genotype_table.tsv.gz",
+    output:
+        lr_out = "{output_dir}/logistic_regression_and_overlap/logistic_regresison.tsv",
+        variant_out = "{output_dir}/logistic_regression_and_overlap/variant_summary.tsv"
+    log:
+        "{output_dir}/logistic_regression_and_overlap/regression.log"
+    shell:
+        "Rscript R_scripts/multiple_logistic_regression.R --inheritance {input.inheritance} --clinvar {input.clinvar} --covariates {input.covariates} --genotype {input.covariates} --genotype {input.genotype} --VariantOut {output.variant_out} --LROut {output.lr_out} &> {log}"
+
+
+
+        
+
+
+
+
