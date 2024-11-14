@@ -50,7 +50,7 @@ cd aou_methods/
 snakemake --cores 1 --configfile config.yaml
 ```
 
-This will generate the following directories in the default output directory
+This will generate the following files in the default output directory
 * dev_output/logistic_regression_and_overlap/variant_summary.tsv
 * dev_output/logistic_regression_and_overlap/logistic_regression.tsv
 
