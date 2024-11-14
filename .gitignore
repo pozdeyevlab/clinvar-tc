@@ -6,3 +6,4 @@ aou_methods/example_vcf/
 aou_methods/fake_covariates.py
 aou_methods/genemap2.txt
 !aou_methods/modules/manual_check.py
+aou_methods/.snakemake/
