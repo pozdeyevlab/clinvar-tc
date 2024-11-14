@@ -1,0 +1,111 @@
+Warning message:
+package ‘data.table’ was built under R version 4.3.3 
+Loading required package: R.oo
+Loading required package: R.methodsS3
+R.methodsS3 v1.8.2 (2022-06-13 22:00:14 UTC) successfully loaded. See ?R.methodsS3 for help.
+R.oo v1.26.0 (2024-01-24 05:12:50 UTC) successfully loaded. See ?R.oo for help.
+
+Attaching package: ‘R.oo’
+
+The following object is masked from ‘package:R.methodsS3’:
+
+    throw
+
+The following objects are masked from ‘package:methods’:
+
+    getClasses, getMethods
+
+The following objects are masked from ‘package:base’:
+
+    attach, detach, load, save
+
+R.utils v2.12.3 (2023-11-18 01:00:02 UTC) successfully loaded. See ?R.utils for help.
+
+Attaching package: ‘R.utils’
+
+The following object is masked from ‘package:utils’:
+
+    timestamp
+
+The following objects are masked from ‘package:base’:
+
+    cat, commandArgs, getOption, isOpen, nullfile, parse, warnings
+
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+── Attaching core tidyverse packages ─────────────────── tidyverse 2.0.0.9000 ──
+✔ forcats   1.0.0     ✔ readr     2.1.5
+✔ ggplot2   3.5.1     ✔ stringr   1.5.1
+✔ lubridate 1.9.3     ✔ tibble    3.2.1
+✔ purrr     1.0.2     ✔ tidyr     1.3.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::between()     masks data.table::between()
+✖ tidyr::extract()     masks R.utils::extract()
+✖ dplyr::filter()      masks stats::filter()
+✖ dplyr::first()       masks data.table::first()
+✖ lubridate::hour()    masks data.table::hour()
+✖ lubridate::isoweek() masks data.table::isoweek()
+✖ dplyr::lag()         masks stats::lag()
+✖ dplyr::last()        masks data.table::last()
+✖ lubridate::mday()    masks data.table::mday()
+✖ lubridate::minute()  masks data.table::minute()
+✖ lubridate::month()   masks data.table::month()
+✖ lubridate::quarter() masks data.table::quarter()
+✖ lubridate::second()  masks data.table::second()
+✖ purrr::transpose()   masks data.table::transpose()
+✖ lubridate::wday()    masks data.table::wday()
+✖ lubridate::week()    masks data.table::week()
+✖ lubridate::yday()    masks data.table::yday()
+✖ lubridate::year()    masks data.table::year()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Warning message:
+In fread(opt$genotype, sep = "\t") :
+  Detected 2506 column names but the data has 2505 columns. Filling rows automatically. Set fill=TRUE explicitly to avoid this warning.
+[1] "2024-11-13 17:48:11 MST"
+[1] "Successfully made varlist"
+[1] "Successfully filtered df fo variants in varlist"
+[1] "Successfully collected inheritance"
+[1] "Successfully made logistic regression model"
+[1] "COL6A2"
+                                  disease           variant
+1 Ullrich congenital muscular dystrophy 1 chr21:9411410:C:T
+                   inheritance genename
+1 found_both_treat_as_dominant   COL6A2
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          cancer_and_mutation_ids
+1 HG00130|HG00148|HG00233|HG00238|HG00244|HG00288|HG00309|HG00345|HG00373|HG00543|HG00596|HG00608|HG00632|HG00640|HG00692|HG00736|HG01131|HG01168|HG01277|HG01311|HG01325|HG01444|HG01525|HG01531|HG01669|HG01678|HG01777|HG01786|HG01855|HG01980|HG02026|HG02082|HG02086|HG02104|HG02252|HG02356|HG02408|HG02502|HG02545|HG02546|HG02603|HG02685|HG02721|HG02780|HG02879|HG02970|HG03069|HG03172|HG03196|HG03313|HG03378|HG03382|HG03397|HG03458|HG03479|HG03557|HG03575|HG03589|HG03681|HG03693|HG03702|HG03736|HG03752|HG03862|HG03868|HG03869|HG03895|HG03920|HG04042|HG04155|NA07000|NA11920|NA11992|NA12273|NA12282|NA18501|NA18520|NA18544|NA18623|NA18636|NA18638|NA18747|NA18865|NA18923|NA18962|NA18970|NA18997|NA19003|NA19042|NA19080|NA19084|NA19087|NA19102|NA19114|NA19190|NA19214|NA19399|NA19726|NA19780|NA19783|NA19914|NA20281|NA20340|NA20532|NA20775|NA20792|NA20802|NA20847|NA20869|NA20896|NA21086|NA21106
+[1] "Successfully made varlist"
+[1] "Successfully filtered df fo variants in varlist"
+[1] "Successfully collected inheritance"
+[1] "Successfully made logistic regression model"
+[1] "COL18A1"
+               disease           variant                         inheritance
+1 Retinitis pigmentosa chr21:9411410:C:T not_found_in_omim_treat_as_dominant
+  genename
+1  COL18A1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          cancer_and_mutation_ids
+1 HG00130|HG00148|HG00233|HG00238|HG00244|HG00288|HG00309|HG00345|HG00373|HG00543|HG00596|HG00608|HG00632|HG00640|HG00692|HG00736|HG01131|HG01168|HG01277|HG01311|HG01325|HG01444|HG01525|HG01531|HG01669|HG01678|HG01777|HG01786|HG01855|HG01980|HG02026|HG02082|HG02086|HG02104|HG02252|HG02356|HG02408|HG02502|HG02545|HG02546|HG02603|HG02685|HG02721|HG02780|HG02879|HG02970|HG03069|HG03172|HG03196|HG03313|HG03378|HG03382|HG03397|HG03458|HG03479|HG03557|HG03575|HG03589|HG03681|HG03693|HG03702|HG03736|HG03752|HG03862|HG03868|HG03869|HG03895|HG03920|HG04042|HG04155|NA07000|NA11920|NA11992|NA12273|NA12282|NA18501|NA18520|NA18544|NA18623|NA18636|NA18638|NA18747|NA18865|NA18923|NA18962|NA18970|NA18997|NA19003|NA19042|NA19080|NA19084|NA19087|NA19102|NA19114|NA19190|NA19214|NA19399|NA19726|NA19780|NA19783|NA19914|NA20281|NA20340|NA20532|NA20775|NA20792|NA20802|NA20847|NA20869|NA20896|NA21086|NA21106
+[1] "Successfully made varlist"
+[1] "Successfully filtered df fo variants in varlist"
+[1] "Successfully collected inheritance"
+[1] "Successfully made logistic regression model"
+[1] "COL18A1"
+            disease           variant                         inheritance
+1 Retinal dystrophy chr21:9411410:C:T not_found_in_omim_treat_as_dominant
+  genename
+1  COL18A1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          cancer_and_mutation_ids
+1 HG00130|HG00148|HG00233|HG00238|HG00244|HG00288|HG00309|HG00345|HG00373|HG00543|HG00596|HG00608|HG00632|HG00640|HG00692|HG00736|HG01131|HG01168|HG01277|HG01311|HG01325|HG01444|HG01525|HG01531|HG01669|HG01678|HG01777|HG01786|HG01855|HG01980|HG02026|HG02082|HG02086|HG02104|HG02252|HG02356|HG02408|HG02502|HG02545|HG02546|HG02603|HG02685|HG02721|HG02780|HG02879|HG02970|HG03069|HG03172|HG03196|HG03313|HG03378|HG03382|HG03397|HG03458|HG03479|HG03557|HG03575|HG03589|HG03681|HG03693|HG03702|HG03736|HG03752|HG03862|HG03868|HG03869|HG03895|HG03920|HG04042|HG04155|NA07000|NA11920|NA11992|NA12273|NA12282|NA18501|NA18520|NA18544|NA18623|NA18636|NA18638|NA18747|NA18865|NA18923|NA18962|NA18970|NA18997|NA19003|NA19042|NA19080|NA19084|NA19087|NA19102|NA19114|NA19190|NA19214|NA19399|NA19726|NA19780|NA19783|NA19914|NA20281|NA20340|NA20532|NA20775|NA20792|NA20802|NA20847|NA20869|NA20896|NA21086|NA21106
+[1] "2024-11-13 17:48:11 MST"

@@ -1,0 +1,14 @@
+name: aou_methods
+channels:
+  - bioconda
+  - conda-forge
+  - r
+dependencies:
+  - poetry=1.5.1
+  - python=3.11
+  - r-base=4.3.1
+  - r-data.table
+  - r-R.utils=2.12.3
+  - r-dplyr=1.1.4
+  - r-tidyverse
+  - conda-forge::r-optparse
