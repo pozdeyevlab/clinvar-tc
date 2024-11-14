@@ -19,12 +19,13 @@ opt <- parse_args(OptionParser(option_list=option_list))
 
 
 
-# Read in clinvar & inheritance data
+
+# Read in clinvar & inheritance data & covariates & genotypes
 clinvar_dt <- fread(opt$clinvar)
 clinvar_df <- fread(opt$clinvar)
+
 inheritance_df <- fread(opt$inheritance)
 
-#residuals <- readRDS('RDS/residual_df.rds')
 covar <- fread(opt$covariates)
 covar$sex_at_birth <- as.numeric(as.factor(covar$sex_at_birth))
 covar$race <- as.numeric(as.factor(covar$race))
@@ -82,7 +83,8 @@ setClass(Class = "FinalTables",
 
 
 ### WORKER FUNCTIONS ###
-  generate_output_table <- function(clinvar_dt) {
+
+generate_output_table <- function(clinvar_dt) {
   output_df <- data.frame("disease" = unique(clinvar_dt$PhenotypeList))
   # Add columns for adj_r_squared, and p_value
   output_df$AIC <- rep(".", nrow(output_df))
@@ -105,7 +107,7 @@ generate_variant_output_table <- function() {
 
 
 # Generate Variant List
-# Currently set to alt first
+
 generate_varlist <- function(clinvar_table, phenotype) {
   gene_symbol_df <- clinvar_table[clinvar_table$PhenotypeList == phenotype, ]
 
@@ -132,7 +134,7 @@ filter_gt_dt <- function(gt_dt, varlist) {
 # Find inheritance according to variant, gene, and phenotype
 find_inheritance <- function(inheritance_df, phenotype, clinvar_df, variant) {
   # Search inheritance table for inheritance
-  # everything except diseases found to be explicitly recessive will be treated as dominant # nolint: line_length_linter.
+  # everything except diseases found to be explicitly recessive will be treated as dominant
   genes <- as.list(unique(clinvar_df[clinvar_df$ref_first_variant == variant, ]$GeneSymbol))
   for (gene in genes) {
     if (!rlang::is_empty(gene)) {
@@ -151,7 +153,7 @@ find_inheritance <- function(inheritance_df, phenotype, clinvar_df, variant) {
 }
 
 
-# master - variant, inheritance, (ids), tc, id in medullary
+
 # Calculate non reference variants according to inheritance
 apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
   master <- as.data.frame(filtered_gt_dt[, 'variant'])
@@ -198,10 +200,9 @@ apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
         dominant_df <- as.data.frame(apply(filtered_gt_dt[dominant_rows, -c('variant')], 2,
                           function(col) ifelse(col == "1|0" | col == "1|1" | col == '0|1', 1, 0)))
     } 
-    #write.table(dominant_df, file = 'prev/dominant.tsv', sep='\t', quote=FALSE, row.name=FALSE)
     dominant_df$variant_id <- filtered_gt_dt[dominant_rows, variant]
     dominant_df$inheritance <- master[dominant_rows, ]$inheritance
-    #find_cancer_mutation_samples(final_master, phenotype)
+
     return(dominant_df)
   }
   if (is_empty(dominant_rows) && !is_empty(recessive_rows)){
@@ -215,14 +216,13 @@ apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
     }
     recessive_df$variant_id <- filtered_gt_dt[recessive_rows, variant]
     recessive_df$inheritance <- master[recessive_rows, ]$inheritance
-    #find_cancer_mutation_samples(final_master, phenotype)
+
     return(recessive_df)
   }
 }
 
                        
 write_secondary_output <- function(genotype_df, phenotype, clinvar_df){
-    #genotype_df <- results@variant_df
     non_zero_index <- which(colSums(genotype_df[,!names(genotype_df) %in% c("variant_id", "inheritance")])>0)
     if (length(non_zero_index) == 1){
         colname <- names(non_zero_index)
@@ -317,8 +317,6 @@ main <- function(inputs, gt_dt, phenotype, clinvar_df) {
     # Subset clinvar table and create varlist
     varlist <- generate_varlist(inputs@clinvar, phenotype)
     print('Successfully made varlist')
-    # This is not included in the actual analysis however for the purposes of demonstration we needed to create an artificial list of varaints that would overlap with our artificial thyroid cancer diagnosis
-    #varlist <- c("chr21:9411239:G:A","chr21:9411239:G:A","chr21:9411245:C:A", "chr21:9411410:C:T")
 
     filtered_gt_dt <- gt_dt[gt_dt$variant %in% as.list(varlist),]
     print('Successfully filtered df fo variants in varlist')
@@ -396,8 +394,8 @@ for (index in 1:nrow(output_table)) {
     write.table(output_table, file=opt$LROut, sep='\t', row.names=FALSE, quote=FALSE)
 }
 
-# Add genes to variant level summary
-# read in table
+
+# Add header to variant level summary
 variant_results = read.table(opt$VariantOut, sep='\t')
 colnames(variant_results) <- c('disease', 'variant','inheritance', 'gene', 'sample_ids')
 write.table(variant_results, file = opt$VariantOut, sep='\t', quote=FALSE, row.name=FALSE)
