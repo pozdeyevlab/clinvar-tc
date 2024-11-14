@@ -1,4 +1,5 @@
 ## Disclosure
+
 The original analysis was done using VCFs from short read whole genome sequencing (v7) in All of Us (AoU). The VCFs nor the associated covariate files can be exported from the AoU database. To provide interested parties with a ‘replica’ of our workflow we provide a snakemake pipeline which walks through the steps of our analysis. Follow the steps below to get started!
 
 ### The p-values, gene names, and variants output in this example **are not correct**. They are only meant to simulate our work on AoU. To ensure that there is adequate overlap between the variants available from 1K Genomes and the example ClinVar data, the provided a mock ClinVar table has been edited to include variants that are **otherwise not present**. 
@@ -49,6 +50,7 @@ mv 1kGP_high_coverage_Illumina.chr21.filtered.SNV_INDEL_SV_phased_panel.vcf.gz c
 wget https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20220422_3202_phased_SNV_INDEL_SV/1kGP_high_coverage_Illumina.chr21.filtered.SNV_INDEL_SV_phased_panel.vcf.gz.tbi
 mv 1kGP_high_coverage_Illumina.chr21.filtered.SNV_INDEL_SV_phased_panel.vcf.gz.tbi chr21.vcf.gz.tbi
 ```
+
 •	OMIM Inheritance data can be downloaded by following the instructions on the OMIM website [here]( https://data.omim.org/downloads/). Make sure that the file `genemap2.txt` is  placed in `example_inputs/`. 
 
 ## Launching the pipeline
