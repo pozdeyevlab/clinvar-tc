@@ -94,13 +94,13 @@ rule all:
 rule bcftools_filter_and_query:
     input: 
         vcf = lambda wc: samples[wc.sample].vcf,
-        variant_file = "regions.tsv"
+        variant_file = variant_table_path
     output:
         vcf = "{output_dir}/per_chrom_gt_table/{sample}.tsv.gz"
     log:
         "{output_dir}/per_chrom_gt_table/{sample}.log"
     shell:
-        "bcftools norm -m- -R {input.variant_file} {input.vcf} | bcftools query -f 'chr%CHROM:%POS:%REF:%ALT[\t%GT]\n' | bgzip -c >> {output.vcf}"
+        "bcftools norm -m- -R {input.variant_file} {input.vcf} | bcftools query -f '%CHROM:%POS:%REF:%ALT[\t%GT]\n' | bgzip -c >> {output.vcf}"
 
 
 rule concat_gt_tables:

@@ -318,7 +318,7 @@ main <- function(inputs, gt_dt, phenotype, clinvar_df) {
     varlist <- generate_varlist(inputs@clinvar, phenotype)
     print('Successfully made varlist')
     # This is not included in the actual analysis however for the purposes of demonstration we needed to create an artificial list of varaints that would overlap with our artificial thyroid cancer diagnosis
-    varlist <- c("chr21:9411239:G:A","chr21:9411239:G:A","chr21:9411245:C:A", "chr21:9411410:C:T")
+    #varlist <- c("chr21:9411239:G:A","chr21:9411239:G:A","chr21:9411245:C:A", "chr21:9411410:C:T")
 
     filtered_gt_dt <- gt_dt[gt_dt$variant %in% as.list(varlist),]
     print('Successfully filtered df fo variants in varlist')
