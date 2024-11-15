@@ -26,7 +26,7 @@ Additional scripts:
 * `aou_methods/R_scripts/APC_pathogenic_variants_AoU_v7.R`
 * `aou_methods/R_scripts/PTEN_pathogenic_variants_AoU_v7.R`
 * `aou_methods/R_scripts/RET_pathogenic_variants_AoU_v7.R`
-* ‘`aou_methods/manually_check_pathogeniciy.py`
+* `aou_methods/manually_check_pathogeniciy.py`
 
 ## Environment set-up 
 ```bash

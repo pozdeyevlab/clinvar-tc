@@ -27,7 +27,6 @@ inheritance_df <- fread(opt$inheritance)
 
 covar <- fread(opt$covariates)
 covar$sex_at_birth <- as.numeric(as.factor(covar$sex_at_birth))
-covar$race <- as.numeric(as.factor(covar$race))
 
 # Read in genotype data
 gt_table = fread(opt$genotype, sep='\t')
