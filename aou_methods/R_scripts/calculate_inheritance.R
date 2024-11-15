@@ -42,7 +42,7 @@ inheritance_df <- clinvar_dt %>%
     distinct()
 
 omim$Inheritance_col <- omim$Phenotypes
-inheritance_df <- merge(inheritance_df, omim[ ,c('Chromosome', 'Genomic Position Start', 'Genomic Position End', 'Approved Gene Symbol', 'Inheritance_col')], by.x='GeneSymbol', by.y='Approved Gene Symbol')
+inheritance_df <- merge(inheritance_df, omim[ ,c('# Chromosome', 'Genomic Position Start', 'Genomic Position End', 'Approved Gene Symbol', 'Inheritance_col')], by.x='GeneSymbol', by.y='Approved Gene Symbol')
 
 colnames(inheritance_df) <- c('GeneSymbol', 'PhenotypeList', 'Chromosome', 'Start', 'End', 'Inheritance_col')
 
