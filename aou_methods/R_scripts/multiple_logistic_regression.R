@@ -18,8 +18,6 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list=option_list))
 
 
-
-
 # Read in clinvar & inheritance data & covariates & genotypes
 clinvar_dt <- fread(opt$clinvar)
 clinvar_df <- fread(opt$clinvar)
@@ -28,7 +26,6 @@ inheritance_df <- fread(opt$inheritance)
 
 covar <- fread(opt$covariates)
 covar$sex_at_birth <- as.numeric(as.factor(covar$sex_at_birth))
-covar$race <- as.numeric(as.factor(covar$race))
 
 # Read in genotype data
 gt_table = fread(opt$genotype, sep='\t')
@@ -83,7 +80,6 @@ setClass(Class = "FinalTables",
 
 
 ### WORKER FUNCTIONS ###
-
 generate_output_table <- function(clinvar_dt) {
   output_df <- data.frame("disease" = unique(clinvar_dt$PhenotypeList))
   # Add columns for adj_r_squared, and p_value
@@ -107,7 +103,6 @@ generate_variant_output_table <- function() {
 
 
 # Generate Variant List
-
 generate_varlist <- function(clinvar_table, phenotype) {
   gene_symbol_df <- clinvar_table[clinvar_table$PhenotypeList == phenotype, ]
 
@@ -151,8 +146,6 @@ find_inheritance <- function(inheritance_df, phenotype, clinvar_df, variant) {
     }
   }
 }
-
-
 
 # Calculate non reference variants according to inheritance
 apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
@@ -255,32 +248,37 @@ write_secondary_output <- function(genotype_df, phenotype, clinvar_df){
 }
                                        
                        
-
 # Generate table for logistic regression
 generate_logistic_model_df <- function(table, inputs, phenotype) {
   covar <- inputs@covariants
-  # Check if samples nned to be removed prior to analysis
-  men <- grepl('Multiple endocrine neoplasia ', phenotype)
+  men <- grepl('Multiple endocrine neoplasia', phenotype)
   mt <- grepl('Medullary thyroid ', phenotype)
   if (!men & !mt){
-    variant_count_table <- table[,!names(table) %in% inputs@mt_samples]
-    subset_covar <- covar[!(covar$person_id %in% inputs@mt_samples),]
-    tc_samples <- subset_covar[subset_covar$tc_diagnosis == 1, ]$person_id
-
-    cols_to_keep <- intersect(names(variant_count_table), subset_covar$person_id)
-    variant_filtered <- variant_count_table[, cols_to_keep, drop = FALSE]
-    subset_covar$variant_count <- colSums(
-      variant_filtered[ ,!names(variant_filtered) %in% c("variant_id", "inheritance")])
-
-    subset_covar <- subset_covar %>%
+    # Remove medullary cases from model's not looking at Medullary Thyroid Cancer and MEN
+    table <- table[,!names(table) %in% inputs@mt_samples]
+    cols_to_keep <- intersect(names(table), covar$person_id)
+    cols_to_keep_2 <- append(cols_to_keep, 'inheritance')
+    cols_to_keep_3 <- append(cols_to_keep_2, 'variant_id')
+    table <- table[, cols_to_keep_3, drop = FALSE]
+    covar <- covar[covar$person_id %in% cols_to_keep_3,]
+    covar$variant_count <- colSums(table[,!names(table) %in% c("variant_id", "inheritance")])
+    tc_samples <- covar[covar$tc_diagnosis == 1, ]$person_id
+    covar$variant_count <- colSums(
+      table[ ,!names(table) %in% c("variant_id", "inheritance")]) 
+    covar <- covar %>%
       mutate(variant_count = ifelse(variant_count >= 1, 1, 0)) %>%
       dplyr::select(-person_id)
     
-    final <- variant_count_table[,names(variant_count_table) %in% c("variant_id", "inheritance", tc_samples)]
+    final <- table[,names(table) %in% c("variant_id", "inheritance", tc_samples)]
     return(new("FinalTables",
                variant_df=final,
-               covariate_df=subset_covar))
+               covariate_df=covar))
   } else {
+    cols_to_keep <- intersect(names(table), covar$person_id)
+    cols_to_keep_2 <- append(cols_to_keep, 'inheritance')
+    cols_to_keep_3 <- append(cols_to_keep_2, 'variant_id')
+    table <- table[, cols_to_keep_3, drop = FALSE]
+    covar <- covar[covar$person_id %in% cols_to_keep_3,]
     covar$variant_count <- colSums(table[,!names(table) %in% c("variant_id", "inheritance")])
     tc_samples <- covar[covar$tc_diagnosis == 1, ]$person_id
     covar <- covar %>%
@@ -319,7 +317,7 @@ main <- function(inputs, gt_dt, phenotype, clinvar_df) {
     print('Successfully made varlist')
 
     filtered_gt_dt <- gt_dt[gt_dt$variant %in% as.list(varlist),]
-    print('Successfully filtered df fo variants in varlist')
+    print('Successfully filtered df for variants in varlist')
 
     # If there are 0 rows in the filtered table, then associated variants are not present in AoU dataset v7
     rows <- nrow(filtered_gt_dt)
@@ -328,9 +326,11 @@ main <- function(inputs, gt_dt, phenotype, clinvar_df) {
         # Table of IID's and the whether they are 0 (ref) or (1) non-ref at each variant (accounting for heritability)
         inheritance_results <- apply_inheritance_logic(filtered_gt_dt, phenotype, inputs)
         print('Successfully collected inheritance')
+        
         # Format table so that it is compatible with downstream analysis
         # Generate data frame for linear regression
         final_tables <- generate_logistic_model_df(inheritance_results, inputs, phenotype)
+
         ## Calculate TC mutation overlap 
         cancer_and_disease_count <- nrow(final_tables@covariate_df %>% filter(tc_diagnosis == 1 & variant_count >= 1))
 
@@ -378,7 +378,7 @@ inputs <- new("Inputs",
    )
 
 # Subset to the first 3 phenotypes for demonstration purposes
-output_table = output_table[1:3,]
+output_table = output_table[1:5,]
 
 ### CALL MAIN COMMAND ###
 print(Sys.time())
@@ -399,4 +399,13 @@ for (index in 1:nrow(output_table)) {
 variant_results = read.table(opt$VariantOut, sep='\t')
 colnames(variant_results) <- c('disease', 'variant','inheritance', 'gene', 'sample_ids')
 write.table(variant_results, file = opt$VariantOut, sep='\t', quote=FALSE, row.name=FALSE)
+print(Sys.time())
+
+# Add header to variant level summary
+if (file.exists(opt$VariantOut)) {
+  variant_results <- read.table(opt$VariantOut, sep='\t')
+  variant_results <- unique(variant_results)
+  colnames(variant_results) <- c('disease', 'variant','inheritance', 'gene', 'sample_ids')
+  write.table(variant_results, file = opt$VariantOut, sep='\t', quote=FALSE, row.name=FALSE)
+}
 print(Sys.time())

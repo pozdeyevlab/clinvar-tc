@@ -41,15 +41,13 @@ inheritance_df <- clinvar_dt %>%
     filter(GeneSymbol != 'not provided') %>%
     distinct()
 
-inheritance_df <- merge(inheritance_df, omim[ ,c('Chromosome', 'Genomic Position Start', 'Genomic Position End', 'Approved Gene Symbol')], by.x='GeneSymbol', by.y='Approved Gene Symbol')
+omim$Inheritance_col <- omim$Phenotypes
+inheritance_df <- merge(inheritance_df, omim[ ,c('# Chromosome', 'Genomic Position Start', 'Genomic Position End', 'Approved Gene Symbol', 'Inheritance_col')], by.x='GeneSymbol', by.y='Approved Gene Symbol')
 
-colnames(inheritance_df) <- c('GeneSymbol', 'PhenotypeList', 'Chromosome', 'Start', 'End')
-
-inheritance_df <- inheritance_df[,1:5]
-print(dim(inheritance_df))
+colnames(inheritance_df) <- c('GeneSymbol', 'PhenotypeList', 'Chromosome', 'Start', 'End', 'Inheritance_col')
 
 
-for (index in 1:nrow(inheritance_df)) {
+for (index in 1:nrow(inheritance_df)){
     gene <- inheritance_df$GeneSymbol[index]
     phenotype <- inheritance_df$PhenotypeList[index]
     
@@ -57,22 +55,33 @@ for (index in 1:nrow(inheritance_df)) {
     from_name_dominant <- length(grep('autosomal dominant', tolower(phenotype)))
     
     if (!rlang::is_empty(gene)){
-        sub_omim <- as.data.frame(omim[omim$'Approved Gene Symbol'==gene,] %>% 
-                                  separate_rows(Phenotypes, sep = ";"))
+        sub_omim <- as.data.frame(omim[omim$'Approved Gene Symbol'==gene,] %>% separate_rows(Phenotypes, sep = ";"))
         
-        recessive <- length(grep('Autosomal recessive', sub_omim[grep(phenotype, sub_omim$Phenotypes),]))
-        dominant <- length(grep('Autosomal dominant', sub_omim[grep(phenotype, sub_omim$Phenotypes),]))
+        recessive <- sum(grepl('recessive', sub_omim$Phenotypes))
+        
+        dominant <- sum(grepl('dominant', sub_omim$Inheritance_col))
+        if (recessive >= 1) {
+            recessive = TRUE
+        } else {
+            recessive = FALSE
+        }
+        if (dominant >= 1) {
+            dominant = TRUE
+        } else {
+            dominant = FALSE
+        }
 
-        if (recessive==0 & dominant==1){
+        
+        if (!recessive & dominant){
             inheritance <- 'dominant_from_omim'
         }
-        if (recessive==1 & dominant==0){
+        if (recessive & !dominant){
             inheritance <- 'recessive_from_omim'
         }
-        if (recessive==1 & dominant==1){
+        if (recessive & dominant){
             inheritance <- 'found_both_treat_as_dominant'
         }
-        if (recessive==0 & dominant==0){
+        if (!recessive & !dominant){
             inheritance <- 'not_found_in_omim_treat_as_dominant'
         }
     }
