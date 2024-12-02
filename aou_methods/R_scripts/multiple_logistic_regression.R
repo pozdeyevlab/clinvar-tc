@@ -18,7 +18,6 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list=option_list))
 
 
-
 # Read in clinvar & inheritance data & covariates & genotypes
 clinvar_dt <- fread(opt$clinvar)
 clinvar_df <- fread(opt$clinvar)
@@ -148,7 +147,6 @@ find_inheritance <- function(inheritance_df, phenotype, clinvar_df, variant) {
   }
 }
 
-
 # Calculate non reference variants according to inheritance
 apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
   master <- as.data.frame(filtered_gt_dt[, 'variant'])
@@ -197,6 +195,7 @@ apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
     } 
     dominant_df$variant_id <- filtered_gt_dt[dominant_rows, variant]
     dominant_df$inheritance <- master[dominant_rows, ]$inheritance
+
     return(dominant_df)
   }
   if (is_empty(dominant_rows) && !is_empty(recessive_rows)){
@@ -210,6 +209,7 @@ apply_inheritance_logic <- function(filtered_gt_dt, phenotype, inputs) {
     }
     recessive_df$variant_id <- filtered_gt_dt[recessive_rows, variant]
     recessive_df$inheritance <- master[recessive_rows, ]$inheritance
+
     return(recessive_df)
   }
 }
@@ -393,6 +393,13 @@ for (index in 1:nrow(output_table)) {
     output_table$cancer_and_disease[index] <- log_results@overlap_count
     write.table(output_table, file=opt$LROut, sep='\t', row.names=FALSE, quote=FALSE)
 }
+
+
+# Add header to variant level summary
+variant_results = read.table(opt$VariantOut, sep='\t')
+colnames(variant_results) <- c('disease', 'variant','inheritance', 'gene', 'sample_ids')
+write.table(variant_results, file = opt$VariantOut, sep='\t', quote=FALSE, row.name=FALSE)
+print(Sys.time())
 
 # Add header to variant level summary
 if (file.exists(opt$VariantOut)) {
