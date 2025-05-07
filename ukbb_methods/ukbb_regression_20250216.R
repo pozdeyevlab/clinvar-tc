@@ -237,29 +237,26 @@ write_secondary_output <- function(genotype_df, phenotype, clinvar_df){
         colname <- names(non_zero_index)
         gt_only <- as.data.frame(genotype_df[,non_zero_index])
         colnames(gt_only) <- colname
+	    gt_only$variant_id <- genotype_df$variant_id
         
     } else {
         gt_only <- as.data.frame(genotype_df[,non_zero_index])
+        gt_only$variant_id <- genotype_df$variant_id
     }
-    for (index in 1:nrow(genotype_df)){
-        inheritance <- genotype_df$inheritance[index]
-        variant <- genotype_df$variant_id[index]
-        if (sum(gt_only[index, ]) > 0) {
-            tmp_index_df <- t(gt_only[index, ])
-            non_zero <- which(rowSums(tmp_index_df)>0)
-            tmp_index_df <- rownames_to_column(as.data.frame(tmp_index_df))
-            samples <- (tmp_index_df[non_zero,]$rowname)
-            collapsed_samples <- paste0(samples, collapse = "|")
-            gene <- clinvar_df[clinvar_df$PhenotypeList == phenotype & clinvar_df$ref_first_variant == variant,]$GeneSymbol
-            print(gene)
+    inheritance <- genotype_df$inheritance[index]
+    variant <- genotype_df$variant_id[index]
+    if (length(samples) >= 1) {
+	    tmp_index_df <- as.data.frame(gt_only[index, ])
+	    x = tmp_index_df %>% pivot_longer(-variant_id, values_to='count', names_to='ID') %>filter   (count >=1)
+	    samples <- as.list(x$ID)
+	    collapsed_samples <- paste0(samples, collapse = "|")
+            gene <- clinvar_df[clinvar_df$PhenotypeList == phenotype &  clinvar_df$ref_first_variant == variant_id,]$GeneSymbol
             tmp <- data.frame(disease=phenotype,
-                               variant=variant,
+                               variant_id=variant,
                                inheritance=inheritance,
                                genename=gene,
                                cancer_and_mutation_ids=collapsed_samples)
-            print(tmp)
-            write.table(tmp, file=opt$VariantOut, append=TRUE, sep='\t', col.names=FALSE, row.names=FALSE, quote=FALSE)
-        }
+	    write.table(tmp, file=opt$VariantOut, append=TRUE, sep='\t', col.names=FALSE, row.  names=FALSE, quote=FALSE)
     }
 }
                                        
